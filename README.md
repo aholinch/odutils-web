@@ -29,6 +29,6 @@ odutils-web and odutils require Ant to compile from the command line or can be i
 
 ## SGP4 Binaries
 You need to have the binaries from USSF.  If you have an account, you can download them from [Space-Track.org](https://www.space-track.org/documentation#/sgp4).  As of this writing the available file is Sgp4Prop_small_v8.1.zip.  Download the zip if you agree to the terms in the user agreement, and extract it somewhere on your system.  
-From the extracted folders copy the platform folder for your OS to the lib directory in this project.  For Windows, copy <SGP4 Dir>\Lib\Win64 to lib\Win64.  For Linux and Mac copy <SGP4 Dir>/Lib/Linux64 to lib/Linux64. 
+From the extracted folders copy the platform folder for your OS to the lib directory in this project.  For Windows, copy <SGP4 Dir>\Lib\Win64 to lib\Win64.  For Linux copy <SGP4 Dir>/Lib/Linux64 to lib/Linux64. 
 
 # Container Recipes

@@ -17,7 +17,9 @@ limitations under the License.
 */
 package odutils.web;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.net.URI;
 
 import net.freeutils.httpserver.HTTPServer;
 import net.freeutils.httpserver.HTTPServer.FileContextHandler;
@@ -25,6 +27,26 @@ import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
 public class ODUtilsServer 
 {
+	/**
+	 * Method to open the browser to localhost page
+	 */
+	public static void spawnBrowserOpen()
+	{
+		Runnable r = new Runnable() {
+			public void run()
+			{
+				//System.out.println("Attempting to open browser");
+				try {
+					Thread.sleep(1100);
+					Desktop.getDesktop().browse(new URI("http://localhost:9000"));
+				} catch(Exception ex) {};
+				
+			}
+		};
+		
+		Thread t = new Thread(r);
+		t.start();
+	}
 
 	public static void main(String[] args) 
 	{
@@ -37,6 +59,15 @@ public class ODUtilsServer
 			//host.addContext("/rest", new RESTHandler());
 			host.addContext("/rest", new RESTHandler(), "GET","POST");
 			host.addContext("/", new FileContextHandler(new File("web")));
+			
+			if(args != null && args.length>1)
+			{
+				if(args[0].toLowerCase().equals("browser") && args[1].toLowerCase().equals("true"))
+				{
+					spawnBrowserOpen();
+				}
+			}
+			
 			server.start();
 		}
 		catch(Exception ex)

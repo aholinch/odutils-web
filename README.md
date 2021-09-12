@@ -22,6 +22,13 @@ The web server used here is [JLHTTP](https://www.freeutils.net/source/jlhttp/) -
 If you want more features in a Web Server, you can reimplement the handlers in a Servlet for a webapp to be deployed in Tomcat.  Otherwise, you can add a proxy supporting HTTPS and authentication with NGINX or Apache.
 
 # Installation Instructions
+To run the web server clone or download this repository and the the one for [odutils](https://github.com/aholinch/odutils).  Clone them or unzip the archives into the same directory so that odutils and odutils-web are at the same level.
 
+## Ant
+odutils-web and odutils require Ant to compile from the command line or can be imported into an IDE like Eclipse to be compiled.  Instructions for installing Ant can be found [here](https://ant.apache.org/manual/install.html).
+
+## SGP4 Binaries
+You need to have the binaries from USSF.  If you have an account, you can download them from [Space-Track.org](https://www.space-track.org/documentation#/sgp4).  As of this writing the available file is Sgp4Prop_small_v8.1.zip.  Download the zip if you agree to the terms in the user agreement, and extract it somewhere on your system.  
+From the extracted folders copy the platform folder for your OS to the lib directory in this project.  For Windows, copy <SGP4 Dir>\Lib\Win64 to lib\Win64.  For Linux and Mac copy <SGP4 Dir>/Lib/Linux64 to lib/Linux64. 
 
 # Container Recipes

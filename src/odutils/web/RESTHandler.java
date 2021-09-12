@@ -91,23 +91,24 @@ public class RESTHandler implements ContextHandler
 	public int doCart2TLE(Request req, Response resp) throws IOException
 	{
 		CartesianState cart = parseVector(req);
-		System.out.println(cart);
 		if(cart == null)
 		{
 			resp.send(500, "Error parsing cart");
 			return -1;
 		}
-		
+
 		TLE tle1 = CartToTLE.cartToTLE(cart, "99999", false);
 		TLE tle2 = CartToTLE.cartToTLE(cart, "99999", true);
 		TLE tle3 = CartToTLE.cartToXPTLE(cart, "99999");
-
+		
+		
 		String response = "0 Open Source SGP4\r\n"+tle1.getLine1()+"\r\n"+tle1.getLine2();
 		response += "\r\n"+"0 USSF SGP4\r\n"+tle2.getLine1()+"\r\n"+tle2.getLine2();
 		response += "\r\n"+"0 USSF SGP4-XP\r\n"+tle3.getLine1()+"\r\n"+tle3.getLine2();
 		
 		resp.getHeaders().add("Content-Type", "text");
 		resp.send(200, response);
+
 		return 0;
 	}
 

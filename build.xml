@@ -1,0 +1,142 @@
+<!--
+From Ant Tutorial
+http://ant.apache.org/manual/tutorial-HelloWorldWithAnt.html
+-->
+<project name="odutils-web" basedir="." default="jar">
+
+  <property name="src.dir"   value="./src"/>
+  <property name="test.src.dir"   value="./src/test/java"/>
+
+  <property name="lib.dir"   value="./lib"/>
+  <property name="build.dir"   value="build"/>
+  <property name="main.build.dir"   value="build"/>
+  <property name="test.build.dir"   value="build/test"/>
+  <property name="classes.dir" value="${build.dir}/classes"/>
+  <property name="jar.dir"   value="${build.dir}/jar"/>
+
+  <property name="lib.dir"     value="lib"/>
+
+  <path id="classpath">
+        <dirset dir="${classes.dir}" />
+        <fileset dir="${lib.dir}">
+            <include name="*.jar" />
+            <include name="**/*.jar" />
+        </fileset>
+  </path>
+
+  <path id="classpath.test">
+    <pathelement location="lib/junit/junit-4.12.jar"/>
+    <pathelement location="lib/junit/hamcrest-core-1.3.jar"/>
+    <pathelement location="${classes.dir}"/>
+    <pathelement location="${test.build.dir}"/>
+  </path>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="doc"/>
+  </target>
+
+  <target name="compile" depends="buildodutils">
+  	
+    <mkdir dir="${classes.dir}"/>
+  	<pathconvert property="classpathProp" refid="classpath"/>
+
+  	
+    <javac includeantruntime="false" srcdir="${src.dir}" destdir="${classes.dir}" target="1.8" source="1.8" debug="true" compiler="modern">
+      <classpath>
+        <path refid="classpath"/>
+        <path location="${odutils.dir}/build/classes" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}"
+         compress="true" duplicate="preserve">
+      <fileset dir="." includes="${data.dir}/**,images/**"/>
+    </jar>
+  </target>
+
+  <target name="clean-build" depends="clean,jar"/>
+
+  <target name="test-compile" depends="compile">
+    <mkdir dir="${test.build.dir}"/>
+    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false">
+        <classpath refid="classpath.test"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="test-compile">
+    <junit printsummary="on" haltonfailure="yes" fork="true">
+        <classpath>
+          <path refid="classpath.test"/>
+          <pathelement location="${test.build.dir}"/>
+        </classpath>
+        <formatter type="brief" usefile="false" />
+        <batchtest>
+            <fileset dir="${test.src.dir}" includes="**/*Test.java" />
+            <fileset dir="${test.src.dir}" includes="**/*Tests.java" />
+        </batchtest>
+    </junit>
+  </target>
+
+  <target name="checkproj">
+    <available file="../odutils" property="odutils.dir" value="../odutils" />
+    <available file="../odutils-master" property="odutils.dir" value="../odutils-master" />
+    <path id="odutils.classpath">
+        <dirset dir="${odutils.dir}/${classes.dir}" />
+        <fileset dir="${odutils.dir}/${lib.dir}">
+            <include name="*.jar" />
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+  </target>
+
+  <target name="buildodutils" depends="checkproj">
+    <ant antfile="${odutils.dir}/build.xml" dir="${odutils.dir}" target="jar" />
+  </target>
+
+  <!-- see: http://stackoverflow.com/q/453170 -->
+
+  <condition property="isWindows" else="false">
+	<os family="windows" />
+  </condition>
+
+  <condition property="isMac" else="false">
+	<os family="mac" />
+  </condition>
+
+  <condition property="isUnix" else="false">
+	<os family="unix" />
+  </condition>
+
+  <target name="setbinaries" depends="checkproj">
+    <available file="lib/Linux64" property="sgp4lib.dir" value="lib/Linux64" />
+    <available file="lib/Win64" property="sgp4lib.dir" value="lib/Win64" />
+  </target>
+
+  <target name="checklicense">
+    <copy file="${odutils.dir}/lib/ussfsgp4/SGP4_Open_License.txt" tofile="./SGP4_Open_License.txt" />
+  </target>
+
+  <target name="runserver" depends="compile,checklicense,setbinaries">
+    <java dir="."
+      classname="odutils.web.ODUtilsServer"
+      error="server_error.log"
+      fork="true">
+      <arg value="browser"/>
+      <arg value="true"/>
+      <jvmarg value="-Djava.library.path=${sgp4lib.dir}" />
+      <env key="LD_LIBRARY_PATH" value="${sgp4lib.dir}" /> 
+      <classpath>
+        <path refid="classpath"/>
+        <path refid="odutils.classpath"/>
+        <path location="${odutils.dir}/build/classes" />
+        <path location="${sgp4lib.dir}" />
+      </classpath>
+    </java>
+  </target>
+
+</project>
+

@@ -39,7 +39,6 @@ http://ant.apache.org/manual/tutorial-HelloWorldWithAnt.html
   <target name="compile" depends="buildodutils">
   	
     <mkdir dir="${classes.dir}"/>
-  	<pathconvert property="classpathProp" refid="classpath"/>
 
   	
     <javac includeantruntime="false" srcdir="${src.dir}" destdir="${classes.dir}" target="1.8" source="1.8" debug="true" compiler="modern">
@@ -84,6 +83,7 @@ http://ant.apache.org/manual/tutorial-HelloWorldWithAnt.html
   <target name="checkproj">
     <available file="../odutils" property="odutils.dir" value="../odutils" />
     <available file="../odutils-master" property="odutils.dir" value="../odutils-master" />
+    <available file="../odutils-main" property="odutils.dir" value="../odutils-main" />
     <path id="odutils.classpath">
         <dirset dir="${odutils.dir}/${classes.dir}" />
         <fileset dir="${odutils.dir}/${lib.dir}">

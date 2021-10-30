@@ -41,5 +41,9 @@ The docker image runs the web server on port 9000.  To compile the project in th
 
 From the containers/docker directory you can run "docker-compose build" to build the docker image.  You can also run it with "docker-compose run".
 
-The web server should be available from http://localhost:9000.
+The web server should be available from [http://localhost:9000](http://localhost:9000).
+
+The docker compose steps have been tested on Ubuntu 20 and macOS Catalina.  This means running the docker image lets you use the official USSF SGP4-XP libraries on macOS!
+
+
 

@@ -32,3 +32,14 @@ You need to have the binaries from USSF.  If you have an account, you can downlo
 From the extracted folders copy the platform folder for your OS to the lib directory in this project.  For Windows, copy \<SGP4 Dir\>\Lib\Win64 to lib\Win64.  For Linux copy \<SGP4 Dir\>/Lib/Linux64 to lib/Linux64. 
 
 # Container Recipes
+
+Regardless of which platform you are running on, the containers target Linux64, so make sure you have the Linux64 binaries for SGP4 copied to lib/Linux64.
+
+## Docker
+
+The docker image runs the web server on port 9000.  To compile the project in the proper manner for docker call "ant docker" from the project home directory.  It will make a dist jar file and copy the necessary files to the containers/docker/target directory.
+
+From the containers/docker directory you can run "docker-compose build" to build the docker image.  You can also run it with "docker-compose run".
+
+The web server should be available from http://localhost:9000.
+

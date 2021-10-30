@@ -138,5 +138,32 @@ http://ant.apache.org/manual/tutorial-HelloWorldWithAnt.html
     </java>
   </target>
 
+  <target name="dist" depends="jar">
+    <mkdir dir="${build.dir}/dist" />
+    <zip destfile="${build.dir}/dist/odutils-web-dist.jar">
+        <zipgroupfileset dir="${build.dir}/jar" includes="*.jar"/>
+        <zipgroupfileset dir="${odutils.dir}/build/jar" includes="*.jar"/>
+        <zipgroupfileset dir="${odutils.dir}/lib/ussfsgp4" includes="*.jar"/>
+        <zipgroupfileset dir="${odutils.dir}/lib/orekit" includes="*.jar"/>
+        <zipgroupfileset dir="${odutils.dir}/lib/hipparchus" includes="*.jar"/>
+        <zipgroupfileset dir="lib/jlhttp" includes="*.jar"/>
+    </zip>
+
+  </target>
+
+  <target name="docker" depends="dist">
+  	<mkdir dir="containers/docker/target" />
+  	<mkdir dir="containers/docker/target/web" />
+  	<property name="tgt.dir"     value="containers/docker/target"/>
+        <copy file="${build.dir}/dist/odutils-web-dist.jar" tofile="${tgt.dir}/odutils-web-dist.jar" />
+  	<copy todir="${tgt.dir}/web">
+  		<fileset dir="web" />
+  	</copy>
+  	<copy todir="${tgt.dir}">
+  		<fileset dir="${odutils.dir}/lib/ussfsgp4/Linux64/">
+  			<include name="*" />
+  		</fileset>
+  	</copy>
+  </target>
 </project>
 

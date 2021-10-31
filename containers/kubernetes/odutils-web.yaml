@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odutils-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odutils-web
+  template:
+    metadata:
+      labels:
+        app: odutils-web
+    spec:
+      containers:
+        - name: app
+          image: docker_odutilsweb
+          ports:
+            - containerPort: 9000
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: odutils-web
+spec:
+  selector:
+    app: odutils-web
+  ports:
+    - port: 9000
+      targetPort: 9000
+      protocol: TCP
+      nodePort: 32000
+  type: NodePort

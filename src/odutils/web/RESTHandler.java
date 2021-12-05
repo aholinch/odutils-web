@@ -28,6 +28,7 @@ import net.freeutils.httpserver.HTTPServer.ContextHandler;
 import net.freeutils.httpserver.HTTPServer.Request;
 import net.freeutils.httpserver.HTTPServer.Response;
 import odutils.ephem.CartesianState;
+import odutils.ephem.OrekitUtils;
 import odutils.ephem.USSFSGP4;
 import odutils.util.DateUtil;
 import odutils.ephem.od.CartToTLE;
@@ -96,6 +97,12 @@ public class RESTHandler implements ContextHandler
 			resp.send(500, "Error parsing cart");
 			return -1;
 		}
+		
+		String frame = WebUtils.getString(req, "frame", "TEME");
+		if(!frame.equals("TEME"))
+		{
+			// convert to TEME
+		}
 
 		TLE tle1 = CartToTLE.cartToTLE(cart, "99999", false);
 		TLE tle2 = CartToTLE.cartToTLE(cart, "99999", true);
@@ -116,7 +123,7 @@ public class RESTHandler implements ContextHandler
 	{
 		String line1 = req.getParams().get("line1");
 		String line2 = req.getParams().get("line2");
-		
+
 		TLE tle = new TLE(line1,line2);
 		System.out.println(tle.getObjectID() + "\t" + tle.getEpoch() + "\t" + tle.getElType());
 		Date start = WebUtils.getDate(req, "start");
@@ -152,7 +159,7 @@ public class RESTHandler implements ContextHandler
 
 		double mse = mse1;
 		
-		System.out.println(start + "\t" + stop + "\t" + mse + "\t" + stepSec);
+		logger.info(start + "\t" + stop + "\t" + mse + "\t" + stepSec);
 		while(t1<t2)
 		{
 			mses.add(mse);
@@ -163,6 +170,32 @@ public class RESTHandler implements ContextHandler
 		mses.add(mse2);
 		
 		List<CartesianState> carts = USSFSGP4.getCarts(mses, tle);
+		
+		try
+		{
+			String frame = WebUtils.getString(req, "frame", "TEME");
+			frame = frame.toLowerCase();
+			logger.info("Output frame '"+frame+"'");
+			if(!frame.equals("teme"))
+			{
+				if(frame.equals("ecef") || frame.startsWith("iers"))
+				{
+					carts = OrekitUtils.teme2ecef(carts);
+				}
+				else if(frame.equals("eme2000") || frame.equals("j2000"))
+				{
+					carts = OrekitUtils.teme2EME2000(carts);
+				}
+				else
+				{
+					logger.warning("Unknown frame: '" + frame+"'");
+				}
+			}
+		}
+		catch(Exception ex)
+		{
+			logger.log(Level.WARNING,"Error processing frame info",ex);
+		}
 		
 		String response = null;
 		
@@ -191,6 +224,7 @@ public class RESTHandler implements ContextHandler
 		if(carts.size()>2)
 		{
 			ObservationSet obs = new ObservationSet();
+			obs.setCartsFrame(WebUtils.getString(req, "frame", "TEME"));
 			obs.setCarts(carts);
 			
 			SGP4ODTask task = new SGP4ODTask();
@@ -237,6 +271,7 @@ public class RESTHandler implements ContextHandler
 		if(carts.size()>2)
 		{
 			ObservationSet obs = new ObservationSet();
+			obs.setCartsFrame(WebUtils.getString(req, "frame", "TEME"));
 			obs.setCarts(carts);
 			
 			SGP4XPODTask task = new SGP4XPODTask();

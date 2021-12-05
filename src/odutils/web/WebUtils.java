@@ -100,6 +100,20 @@ public class WebUtils
 		return num;
 	}
 	
+	public static String getString(Request req, String param, String defaultVal)
+	{
+		String out = null;
+		try
+		{
+		out = req.getParams().get(param);
+		}
+		catch(Exception ex)
+		{
+			// don't care
+		}
+		if(out == null) out = defaultVal;
+		return out;
+	}
     public static Date getDate(Request req, String param)
     {
     	Date d = null;

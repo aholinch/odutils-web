@@ -27,3 +27,6 @@ build
 .project
 .settings
 /SGP4_Open_License.txt
+
+.DS_Store
+lib/.DS_Store

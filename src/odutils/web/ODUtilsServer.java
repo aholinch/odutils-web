@@ -19,6 +19,9 @@ package odutils.web;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.URI;
 
 import net.freeutils.httpserver.HTTPServer;
@@ -27,6 +30,30 @@ import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
 public class ODUtilsServer 
 {
+	/**
+	 * Listens on localhost only
+	 *
+	 */
+	public static class LocalHostServer extends HTTPServer
+	{
+		public LocalHostServer()
+		{
+			super();
+		}
+		
+		public LocalHostServer(int port)
+		{
+			super(port);
+		}
+		
+		@Override
+	    protected ServerSocket createServerSocket() throws IOException {
+	        ServerSocket serv = serverSocketFactory.createServerSocket(port,0,InetAddress.getLoopbackAddress());
+	        serv.setReuseAddress(true);
+	        return serv;
+	    }
+	}
+	
 	/**
 	 * Method to open the browser to localhost page
 	 */
@@ -53,7 +80,8 @@ public class ODUtilsServer
 		try
 		{
 			int port = 9000;
-			HTTPServer server = new HTTPServer(port);
+			//HTTPServer server = new HTTPServer(port);
+			HTTPServer server = new LocalHostServer(port);
 			VirtualHost host = server.getVirtualHost(null);  // default virtual host
 			
 			//host.addContext("/rest", new RESTHandler());
